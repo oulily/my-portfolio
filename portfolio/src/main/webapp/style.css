@@ -1,54 +1,57 @@
 body {
-    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-}
-
-#navbar {
-    text-align: center;
-}
-
-.name {
-    display: inline-block;
-    padding: 0px 10px 0px 10px;
-}
-
-#content {
-    text-align: center;
-}
-
-#left-content {
-    text-align: center;
-    display: inline-block;
-    padding: 0px 20px 0px 20px;
-    height: 700px;
-    width: 20%;
-    border-right: 2px solid black;
-}
-
-#profile-pic {
-    border: 1px solid black;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
 }
 
 #center-content {
-    text-align: center;
-    vertical-align:top;
-    display: inline-block;
-    padding: 0px 20px 0px 20px;
-    width: 50%;
-    height: 700px;
-    border-right: 2px solid black;
+  text-align: center;
+  vertical-align:top;
+  display: inline-block;
+  padding: 0px 20px 0px 20px;
+  width: 50%;
+  height: 700px;
+  border-right: 2px solid black;
 }
 
-#right-content {
-    text-align: center;
-    vertical-align:top;
-    display: inline-block;
-    padding: 0px 20px 0px 20px;
-    width: 20%;
-    height: 700px;
+#content {
+  text-align: center;
 }
 
 #greeting-container {
   margin-top: 20px;
 }
+
+#left-content {
+  text-align: center;
+  display: inline-block;
+  padding: 0px 20px 0px 20px;
+  height: 700px;
+  width: 20%;
+  border-right: 2px solid black;
+}
+
+.name {
+  display: inline-block;
+  padding: 0px 5px 0px 5px;
+  letter-spacing: 3px;
+}
+
+#navbar {
+  text-align: center;
+}
+
+#profile-pic {
+  border: 1px solid black;
+}
+
+#right-content {
+  text-align: center;
+  vertical-align:top;
+  display: inline-block;
+  padding: 0px 20px 0px 20px;
+  width: 20%;
+  height: 700px;
+}
+
+
 
 
