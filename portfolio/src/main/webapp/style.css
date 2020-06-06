@@ -1,9 +1,54 @@
+body {
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+}
+
+#navbar {
+    text-align: center;
+}
+
+.name {
+    display: inline-block;
+    padding: 0px 10px 0px 10px;
+}
+
 #content {
-  margin-left: auto;
-  margin-right: auto;
-  width: 650px;
+    text-align: center;
+}
+
+#left-content {
+    text-align: center;
+    display: inline-block;
+    padding: 0px 20px 0px 20px;
+    height: 700px;
+    width: 20%;
+    border-right: 2px solid black;
+}
+
+#profile-pic {
+    border: 1px solid black;
+}
+
+#center-content {
+    text-align: center;
+    vertical-align:top;
+    display: inline-block;
+    padding: 0px 20px 0px 20px;
+    width: 50%;
+    height: 700px;
+    border-right: 2px solid black;
+}
+
+#right-content {
+    text-align: center;
+    vertical-align:top;
+    display: inline-block;
+    padding: 0px 20px 0px 20px;
+    width: 20%;
+    height: 700px;
 }
 
 #greeting-container {
   margin-top: 20px;
 }
+
+
