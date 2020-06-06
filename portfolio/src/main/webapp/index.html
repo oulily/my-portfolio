@@ -7,12 +7,53 @@
     <script src="script.js"></script>
   </head>
   <body>
-    <div id="content">
-      <h1>My Portfolio</h1>
-      <p>This is my portfolio.</p>
-      <p>Click here to get a random message:</p>
-      <button onclick="addRandomGreeting()">Hello</button>
-      <div id="greeting-container"></div>
+    <div id="navbar">
+      <div>
+        <h1 class="name">LILY</h1>
+        <h1 class="name">OU</h1>
+      </div>
+      <div id = "social">
+        <a href="https://www.linkedin.com/in/lily-o-2897b0121/">
+          <img src="images/linkedin.png" alt="linkedin logo" width="30">
+        </a>
+        <a href="https://github.com/oulily">
+          <img src="images/github.png" alt="github logo" width="30">
+        </a>
+        <a href="https://www.facebook.com/lily.ou.395">
+          <img src="images/facebook.png" alt="facebook logo" width="30">
+        </a>
+        <a href="https://www.instagram.com/oulilyy/">
+          <img src="images/instagram.png" alt="instagram logo" width="30">
+        </a>
+      </div>
+    </div>
+    <br>
+    <div id="content"> 
+      <div id="left-content">
+        <img id="profile-pic" src="images/profile.jpg" style="width:200px;">
+          <p>Welcome to my website! I grew up in San Francisco and 
+                I'm an incoming third year CS major at UC Santa Barbara.</p>
+          <p>Click here to get a random fact about me:</p>
+          <button onclick="addRandomGreeting()">click me</button>
+          <div id="greeting-container"></div>
+        </div>
+        <div id="center-content">
+          <p>PROJECTS</p>
+          <div>
+            <iframe width="420" height="315"
+                src="https://www.youtube.com/embed/-YTO3MMLIRk?autoplay=1">
+            </iframe>
+            <iframe width="420" height="315"
+                src="https://www.youtube.com/embed/SJ7MXBllnqo?autoplay=1">
+            </iframe>
+          </div>
+        </div>
+        <div id="right-content">
+          <p>Conferences</p>
+          <img src="images/we19local.jpg" width="250">WE19 Local Conference</a>
+          <br><br>
+          <img src="images/ghc19.jpg" width="250">Grace Hopper Conference 2019</a>
+        </div>
     </div>
   </body>
 </html>
