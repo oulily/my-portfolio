@@ -16,7 +16,7 @@
  * Fetches a random fact from the server and adds it to the DOM.
  */
 function addRandomFact() {
-    fetch('/random-fact').then(response => response.text()).then((fact) => {
-        document.getElementById('fact-container').innerText = fact;
-    });
+  fetch('/random-fact').then(response => response.text()).then((fact) => {
+    document.getElementById('fact-container').innerText = fact;
+  });
 }
