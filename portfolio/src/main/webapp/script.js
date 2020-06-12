@@ -13,17 +13,10 @@
 // limitations under the License.
 
 /**
- * Adds a random greeting to the page.
+ * Fetches a random fact from the server and adds it to the DOM.
  */
-function addRandomGreeting() {
-  const greetings =
-      ['I played the viola in high school!', 'My favorite TV show is Killing Eve!', 'I have two younger sisters!', 
-      'I love coffee!', 'I took an aerial silks class in college!', 'I love spicy foods!'];
-
-  // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
-
-  // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+function addRandomFact() {
+  fetch('/random-fact').then(response => response.text()).then((fact) => {
+    document.getElementById('fact-container').innerText = fact;
+  });
 }
