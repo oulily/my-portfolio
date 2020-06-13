@@ -33,13 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/messages")
 public class DataServlet extends HttpServlet {
 
-  private List<String> messages;
-  
-  @Override
-  public void init() {
-    messages = new ArrayList<>();
-  }
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -49,9 +42,9 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
+    List<String> messages = new ArrayList<>();
     for (Entity entity : results.asIterable()) {
       String message = (String) entity.getProperty("text");
-      System.out.println(message);
       messages.add(message);
     }
 
