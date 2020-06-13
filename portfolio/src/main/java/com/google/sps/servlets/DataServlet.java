@@ -14,6 +14,7 @@
 
 package com.google.sps.servlets;
 
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,27 +24,47 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
-@WebServlet("/random-fact")
+@WebServlet("/messages")
 public class DataServlet extends HttpServlet {
 
-  private List<String> facts;
+  private List<String> messages;
   
   @Override
   public void init() {
-    facts = new ArrayList<>();
-    facts.add("I played the viola in high school!");
-    facts.add("My favorite TV show is Killing Eve!");
-    facts.add("I have two younger sisters!");
-    facts.add("I love coffee!"); 
-    facts.add("I took an aerial silks class in college!");
-    facts.add("I love spicy foods!");
+    messages = new ArrayList<>();
   }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String fact = facts.get((int) (Math.random() * facts.size()));
+    
+    // Convert the messages to JSON.
+    Gson gson = new Gson();
+    String json = gson.toJson(messages);
 
-    response.setContentType("text/html;");
-    response.getWriter().println(fact);
+    response.setContentType("application/json;");
+    response.getWriter().println(json);
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    
+    // Get the input from the form.
+    String text = getParameter(request, "text-input", "");
+    messages.add(text);
+
+    // Redirect back to the HTML page.
+    response.sendRedirect("/index.html");
+  }
+
+  /**
+   * @return the request parameter, or the default value if the parameter
+   *         was not specified by the client
+   */
+  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
+    String value = request.getParameter(name);
+    if (value == null) {
+      return defaultValue;
+    }
+    return value;
   }
 }

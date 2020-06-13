@@ -13,10 +13,42 @@
 // limitations under the License.
 
 /**
- * Fetches a random fact from the server and adds it to the DOM.
+ * Adds a random fact to the page.
  */
 function addRandomFact() {
-  fetch('/random-fact').then(response => response.text()).then((fact) => {
-    document.getElementById('fact-container').innerText = fact;
+  const facts =
+    ["I played the viola in high school!",
+    "My favorite TV show is Killing Eve!",
+    "I have two younger sisters!",
+    "I love coffee!",
+    "I took an aerial silks class in college!",
+    "I love spicy foods!"
+    ];
+
+  // Pick a random fact.
+  const fact = facts[Math.floor(Math.random() * facts.length)];
+
+  // Add it to the page.
+  const factContainer = document.getElementById('fact-container');
+  factContainer.innerText = fact;
+}
+
+/**
+ * Adds messages to the page.
+ */
+function getMessages() {
+  fetch('/messages').then(response => response.json()).then((messages) => {
+    const messagesListElement = document.getElementById('messages-container');
+    messagesListElement.innerHTML = '';
+    for (i = 0; i < messages.length; i++) {
+      messagesListElement.appendChild(createListElement(messages[i]));
+    }
   });
+}
+
+/** Creates an <li> element containing text. */
+function createListElement(text) {
+  const liElement = document.createElement('li');
+  liElement.innerText = text;
+  return liElement;
 }
