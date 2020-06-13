@@ -14,6 +14,12 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +42,19 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
+
+    // Load messages from Datastore
+    Query query = new Query("Message");
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+
+    for (Entity entity : results.asIterable()) {
+      String message = (String) entity.getProperty("text");
+      System.out.println(message);
+      messages.add(message);
+    }
+
     // Convert the messages to JSON.
     Gson gson = new Gson();
     String json = gson.toJson(messages);
@@ -50,7 +68,13 @@ public class DataServlet extends HttpServlet {
     
     // Get the input from the form.
     String text = getParameter(request, "text-input", "");
-    messages.add(text);
+    
+    // Add message to Datastore
+    Entity messageEntity = new Entity("Message");
+    messageEntity.setProperty("text", text);
+    
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(messageEntity);
 
     // Redirect back to the HTML page.
     response.sendRedirect("/index.html");
