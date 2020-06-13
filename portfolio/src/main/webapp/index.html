@@ -37,7 +37,15 @@
           <button onclick="addRandomFact()">click here</button>
           <br><br>
           <div id="fact-container"></div>
-          <h3>Messages:</h3>
+
+          <form action="/messages" method="POST">
+            <p>Send me a message:</p>
+            <textarea name="text-input"></textarea>
+            <br/><br/>
+            <input type="submit" />
+          </form>
+
+          <h3>All messages:</h3>
           <button onclick="getMessages()">Fetch messages</button>
           <br>
           <ul id="messages-container"></ul>

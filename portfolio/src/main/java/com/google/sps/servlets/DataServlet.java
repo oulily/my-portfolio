@@ -32,19 +32,39 @@ public class DataServlet extends HttpServlet {
   @Override
   public void init() {
     messages = new ArrayList<>();
-    messages.add("Replacing W with T in What, Where, and When, gives you the answer to each of them.");
-    messages.add("If you rip a hole in a net, there are actually fewer holes in it than there were before.");
-    messages.add("The word swims upside down is also swims.");
   }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     
-    // Convert the messages to JSON
+    // Convert the messages to JSON.
     Gson gson = new Gson();
     String json = gson.toJson(messages);
 
     response.setContentType("application/json;");
     response.getWriter().println(json);
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    
+    // Get the input from the form.
+    String text = getParameter(request, "text-input", "");
+    messages.add(text);
+
+    // Redirect back to the HTML page.
+    response.sendRedirect("/index.html");
+  }
+
+  /**
+   * @return the request parameter, or the default value if the parameter
+   *         was not specified by the client
+   */
+  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
+    String value = request.getParameter(name);
+    if (value == null) {
+      return defaultValue;
+    }
+    return value;
   }
 }
