@@ -70,7 +70,7 @@ public class DataServlet extends HttpServlet {
     datastore.put(messageEntity);
 
     // Redirect back to the HTML page.
-    response.sendRedirect("/index.html");
+    response.sendRedirect("/contact.html");
   }
 
   /**
