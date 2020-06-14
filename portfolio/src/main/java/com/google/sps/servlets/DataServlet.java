@@ -44,7 +44,10 @@ public class DataServlet extends HttpServlet {
 
     List<String> messages = new ArrayList<>();
     for (Entity entity : results.asIterable()) {
-      String message = (String) entity.getProperty("text");
+      String firstName = (String) entity.getProperty("firstName");
+      String lastName = (String) entity.getProperty("lastName");
+      String text = (String) entity.getProperty("text");
+      String message = text + " - " + firstName + " " + lastName;
       messages.add(message);
     }
 
@@ -60,10 +63,14 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     
     // Get the input from the form.
+    String firstName = getParameter(request, "f-name", "");
+    String lastName = getParameter(request, "l-name", "");
     String text = getParameter(request, "text-input", "");
     
     // Add message to Datastore
     Entity messageEntity = new Entity("Message");
+    messageEntity.setProperty("firstName", firstName);
+    messageEntity.setProperty("lastName", lastName);
     messageEntity.setProperty("text", text);
     
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
