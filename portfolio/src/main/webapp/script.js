@@ -38,17 +38,17 @@ function addRandomFact() {
  */
 function getMessages() {
   fetch('/messages').then(response => response.json()).then((messages) => {
-    const messagesListElement = document.getElementById('messages-container');
-    messagesListElement.innerHTML = '';
+    const messagesPElement = document.getElementById('messages-container');
+    messagesPElement.innerHTML = '';
     for (i = 0; i < messages.length; i++) {
-      messagesListElement.appendChild(createListElement(messages[i]));
+      messagesPElement.appendChild(createPElement(messages[i]));
     }
   });
 }
 
-/** Creates an <li> element containing text. */
-function createListElement(text) {
-  const liElement = document.createElement('li');
-  liElement.innerText = text;
-  return liElement;
+/** Creates an <p> element containing text. */
+function createPElement(text) {
+  const pElement = document.createElement('p');
+  pElement.innerText = text;
+  return pElement;
 }

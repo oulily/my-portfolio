@@ -14,6 +14,12 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,16 +33,24 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/messages")
 public class DataServlet extends HttpServlet {
 
-  private List<String> messages;
-  
-  @Override
-  public void init() {
-    messages = new ArrayList<>();
-  }
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
+
+    // Load messages from Datastore
+    Query query = new Query("Message");
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+
+    List<String> messages = new ArrayList<>();
+    for (Entity entity : results.asIterable()) {
+      String firstName = (String) entity.getProperty("firstName");
+      String lastName = (String) entity.getProperty("lastName");
+      String text = (String) entity.getProperty("text");
+      String message = text + " - " + firstName + " " + lastName;
+      messages.add(message);
+    }
+
     // Convert the messages to JSON.
     Gson gson = new Gson();
     String json = gson.toJson(messages);
@@ -49,11 +63,21 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     
     // Get the input from the form.
+    String firstName = getParameter(request, "f-name", "");
+    String lastName = getParameter(request, "l-name", "");
     String text = getParameter(request, "text-input", "");
-    messages.add(text);
+    
+    // Add message to Datastore
+    Entity messageEntity = new Entity("Message");
+    messageEntity.setProperty("firstName", firstName);
+    messageEntity.setProperty("lastName", lastName);
+    messageEntity.setProperty("text", text);
+    
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(messageEntity);
 
     // Redirect back to the HTML page.
-    response.sendRedirect("/index.html");
+    response.sendRedirect("/contact.html");
   }
 
   /**
