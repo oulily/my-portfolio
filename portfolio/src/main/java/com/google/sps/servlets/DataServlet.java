@@ -55,14 +55,19 @@ public class DataServlet extends HttpServlet {
       
       String emojiCode;
       if (sentimentScore < -0.5) {
+        // angry face
         emojiCode = "0x1F620";
-      } else if (sentimentScore >= -0.5 && sentimentScore < 0) {
+      } else if (sentimentScore < 0) {
+        // slightly frowning face
         emojiCode = "0x1F641";
       } else if (sentimentScore == 0) {
+        // neutral face
         emojiCode = "0x1F610";
-      } else if (sentimentScore > 0 && sentimentScore < 0.5) {
+      } else if (sentimentScore < 0.5) {
+        // slightly smiling face
         emojiCode = "0x1F642";
       } else {
+        // grinning face with big eyes
         emojiCode = "0x1F603";
       }
 
