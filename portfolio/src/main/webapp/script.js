@@ -40,8 +40,9 @@ function getMessages() {
   fetch('/messages').then(response => response.json()).then((messages) => {
     const messagesPElement = document.getElementById('messages-container');
     messagesPElement.innerHTML = '';
-    for (i = 0; i < messages.length; i++) {
-      messagesPElement.appendChild(createPElement(messages[i]));
+    for (i = 0; i < messages.length; i+=2) {
+      const emoji = String.fromCodePoint(parseInt(messages[i+1]));
+      messagesPElement.appendChild(createPElement(messages[i] + " " + emoji));
     }
   });
 }

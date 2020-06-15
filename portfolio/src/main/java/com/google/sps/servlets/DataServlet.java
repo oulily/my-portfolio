@@ -14,6 +14,9 @@
 
 package com.google.sps.servlets;
 
+import com.google.cloud.language.v1.Document;
+import com.google.cloud.language.v1.LanguageServiceClient;
+import com.google.cloud.language.v1.Sentiment;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -47,8 +50,32 @@ public class DataServlet extends HttpServlet {
       String firstName = (String) entity.getProperty("firstName");
       String lastName = (String) entity.getProperty("lastName");
       String text = (String) entity.getProperty("text");
-      String message = text + " - " + firstName + " " + lastName;
+      Double sentimentScore = (Double) entity.getProperty("sentimentScore");
+      String sentimentScoreStr = String.format("%.2f", sentimentScore);
+      
+      String emojiCode;
+      if (sentimentScore < -0.5) {
+        // angry face
+        emojiCode = "0x1F620";
+      } else if (sentimentScore < 0) {
+        // slightly frowning face
+        emojiCode = "0x1F641";
+      } else if (sentimentScore == 0) {
+        // neutral face
+        emojiCode = "0x1F610";
+      } else if (sentimentScore < 0.5) {
+        // slightly smiling face
+        emojiCode = "0x1F642";
+      } else {
+        // grinning face with big eyes
+        emojiCode = "0x1F603";
+      }
+
+      String message = text + " - " + firstName + " " + lastName +
+          " (Sentiment Score: " + sentimentScoreStr + ")";
+
       messages.add(message);
+      messages.add(emojiCode);
     }
 
     // Convert the messages to JSON.
@@ -66,12 +93,21 @@ public class DataServlet extends HttpServlet {
     String firstName = getParameter(request, "f-name", "");
     String lastName = getParameter(request, "l-name", "");
     String text = getParameter(request, "text-input", "");
+
+    // Get sentiment score of text
+    Document doc =
+        Document.newBuilder().setContent(text).setType(Document.Type.PLAIN_TEXT).build();
+    LanguageServiceClient languageService = LanguageServiceClient.create();
+    Sentiment sentiment = languageService.analyzeSentiment(doc).getDocumentSentiment();
+    float sentimentScore = sentiment.getScore();
+    languageService.close();
     
     // Add message to Datastore
     Entity messageEntity = new Entity("Message");
     messageEntity.setProperty("firstName", firstName);
     messageEntity.setProperty("lastName", lastName);
     messageEntity.setProperty("text", text);
+    messageEntity.setProperty("sentimentScore", sentimentScore);
     
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(messageEntity);
