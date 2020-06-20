@@ -1,17 +1,3 @@
-// Copyright 2019 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 /**
  * Adds a random fact to the page.
  */
@@ -37,12 +23,13 @@ function addRandomFact() {
  * Adds messages to the page.
  */
 function getMessages() {
-  fetch('/messages').then(response => response.json()).then((messages) => {
-    const messagesPElement = document.getElementById('messages-container');
-    messagesPElement.innerHTML = '';
-    for (i = 0; i < messages.length; i+=2) {
-      const emoji = String.fromCodePoint(parseInt(messages[i+1]));
-      messagesPElement.appendChild(createPElement(messages[i] + " " + emoji));
+  fetch('/form-handler').then(response => response.json()).then((messages) => {
+    const messagesElement = document.getElementById('messages-container');
+    messagesElement.innerHTML = '';
+    for (i = 0; i < messages.length; i++) {
+      const emoji = String.fromCodePoint(parseInt(messages[i].emojiCode));
+      messagesElement.appendChild(createPElement(messages[i].text + " " + emoji));
+      messagesElement.appendChild(createImgElement(messages[i].imageUrl));
     }
   });
 }
@@ -53,3 +40,25 @@ function createPElement(text) {
   pElement.innerText = text;
   return pElement;
 }
+
+/** Creates an <img> element containing an image. */
+function createImgElement(url) {
+  const imgElement = document.createElement('img');
+  imgElement.src = url;
+  imgElement.style.cssText = 'width:200px; display:block; margin:auto; margin-bottom:30px';
+  return imgElement;
+}
+
+/** Retrieves the URL that allows users to upload a file to Blobstore*/
+function fetchBlobstoreUrl() {
+  fetch('/blobstore-upload-url')
+    .then((response) => {
+      return response.text();
+    })
+    .then((imageUploadUrl) => {
+      let messageForm = document.getElementById('my-form');
+      messageForm.action = imageUploadUrl;
+    });
+}
+
+
