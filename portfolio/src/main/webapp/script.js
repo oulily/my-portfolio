@@ -23,8 +23,19 @@ function addRandomFact() {
  * Adds messages to the page.
  */
 function getMessages() {
+  const messagesElement = document.getElementById('messages-container');
+  const buttonElement = document.getElementById('view-button');
+
+  // Toggle hide and show
+  if (messagesElement.style.display === "none") {
+    messagesElement.style.display = "block";
+    buttonElement.innerText = "Hide messages";
+  } else {
+    messagesElement.style.display = "none";
+    buttonElement.innerText = "View messages";
+  }
+
   fetch('/form-handler').then(response => response.json()).then((messages) => {
-    const messagesElement = document.getElementById('messages-container');
     messagesElement.innerHTML = '';
 
     for (i = 0; i < messages.length; i++) {
