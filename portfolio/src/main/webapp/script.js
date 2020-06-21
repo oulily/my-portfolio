@@ -26,10 +26,16 @@ function getMessages() {
   fetch('/form-handler').then(response => response.json()).then((messages) => {
     const messagesElement = document.getElementById('messages-container');
     messagesElement.innerHTML = '';
+
     for (i = 0; i < messages.length; i++) {
       const emoji = String.fromCodePoint(parseInt(messages[i].emojiCode));
+      const imageLabelDescriptions = messages[i].imageLabelDescriptions;
+      const imageLabelScores = messages[i].imageLabelScores;
+      messagesElement.appendChild(createPElement("--------------------------------"));
       messagesElement.appendChild(createPElement(messages[i].text + " " + emoji));
       messagesElement.appendChild(createImgElement(messages[i].imageUrl));
+      messagesElement.appendChild(createPElement("Image analysis:"));
+      messagesElement.appendChild(createUlElement(imageLabelDescriptions, imageLabelScores));
     }
   });
 }
@@ -38,6 +44,7 @@ function getMessages() {
 function createPElement(text) {
   const pElement = document.createElement('p');
   pElement.innerText = text;
+  pElement.style.cssText = 'margin:auto; text-align:center';
   return pElement;
 }
 
@@ -45,8 +52,21 @@ function createPElement(text) {
 function createImgElement(url) {
   const imgElement = document.createElement('img');
   imgElement.src = url;
-  imgElement.style.cssText = 'width:200px; display:block; margin:auto; margin-bottom:30px';
+  imgElement.style.cssText = 
+      'width:200px; display:block; margin:auto; margin-bottom:10px; margin-top:10px;';
   return imgElement;
+}
+
+/** Creates a <ul> element containing image labels. */
+function createUlElement(descriptions, scores) {
+  const ulElement = document.createElement('ul');
+  for (j = 0; j < descriptions.length; j++){
+    const liElement = document.createElement('li');
+    liElement.innerText = descriptions[j] + " " + scores[j];
+    ulElement.appendChild(liElement);
+  }
+  ulElement.style.cssText = 'font-size:13px;';
+  return ulElement;
 }
 
 /** Retrieves the URL that allows users to upload a file to Blobstore*/
