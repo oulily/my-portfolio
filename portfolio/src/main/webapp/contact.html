@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="fetchBlobstoreUrl()">
     <img src="images/profile.jpg" width="150"
         class="rounded-circle mx-auto mt-3 d-block img-fluid p-0 border border-light">
     <nav class="navbar navbar-expand-sm justify-content-center">
@@ -64,33 +64,38 @@
         <img src="images/instagram.png" width="35px">
       </a>
     </div>
-
-    <div class="d-flex justify-content-center mt-5">
-      <form action="/messages" method="POST">
-        <label>Name: </label>
-        <div class="row">
-          <div class="col">
-            <input type="text" name="f-name" class="form-control" placeholder="First name">
+    
+    <div>
+      <div class="d-flex justify-content-center mt-5">
+        <form id="my-form" action="/form-handler" method="POST" enctype="multipart/form-data">
+          <label>Name: </label>
+          <div class="row">
+            <div class="col">
+              <input type="text" name="f-name" class="form-control" placeholder="First name">
+            </div>
+            <div class="col">
+              <input type="text" name="l-name" class="form-control" placeholder="Last name">
+            </div>
           </div>
-          <div class="col">
-            <input type="text" name="l-name" class="form-control" placeholder="Last name">
+          <div class="form-group">
+            <label class="mt-2">Message: </label>
+            <textarea name="text-input" class="form-control"
+                rows="3" placeholder="Enter your message here"></textarea>
+            <label class="mt-2">Photo:</label>
+            <input type="file" name="image" class="form-control-file">
           </div>
-        </div>
-        <div class="form-group">
-          <label class="mt-2">Message: </label>
-          <textarea name="text-input" class="form-control"
-              rows="3" placeholder="Enter your message here"></textarea>
-        </div>
-        <div class="d-flex justify-content-center">
-          <button type="submit" class="btn btn-light">Send</button>
-        </div>
-      </form>
-    </div>
-    <div class="d-flex justify-content-center mt-5">
-      <button class="btn btn-light" onclick="getMessages()">View messages</button>
-    </div>
-    <div class="d-flex justify-content-center mt-4">
-      <div id="messages-container"></div>
+          <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-light">Send</button>
+          </div>
+        </form>
+      </div>
+      <div class="d-flex justify-content-center mt-5">
+        <button class="btn btn-light" id="view-button" onclick="getMessages()">
+            View messages</button>
+      </div>
+      <div class="d-flex justify-content-center mt-4 mb-4">
+        <div class="hidden" id="messages-container"></div>
+      </div>
     </div>
   </body>
 </html>
