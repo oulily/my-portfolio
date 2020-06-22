@@ -40,13 +40,15 @@ function getMessages() {
 
     for (i = 0; i < messages.length; i++) {
       const emoji = String.fromCodePoint(parseInt(messages[i].emojiCode));
-      const imageLabelDescriptions = messages[i].imageLabelDescriptions;
-      const imageLabelScores = messages[i].imageLabelScores;
+      const imageLabels = messages[i].imageLabels;
+    //   const imageLabelDescriptions = messages[i].imageLabelDescriptions;
+    //   const imageLabelScores = messages[i].imageLabelScores;
       messagesElement.appendChild(createPElement("--------------------------------"));
       messagesElement.appendChild(createPElement(messages[i].text + " " + emoji));
       messagesElement.appendChild(createImgElement(messages[i].imageUrl));
       messagesElement.appendChild(createPElement("Image analysis:"));
-      messagesElement.appendChild(createUlElement(imageLabelDescriptions, imageLabelScores));
+      messagesElement.appendChild(createUlElement(imageLabels));
+    //   messagesElement.appendChild(createUlElement(imageLabelDescriptions, imageLabelScores));
     }
   });
 }
@@ -69,11 +71,11 @@ function createImgElement(url) {
 }
 
 /** Creates a <ul> element containing image labels. */
-function createUlElement(descriptions, scores) {
+function createUlElement(imageLabels) {
   const ulElement = document.createElement('ul');
-  for (j = 0; j < descriptions.length; j++){
+  for (j = 0; j < imageLabels.length; j++){
     const liElement = document.createElement('li');
-    liElement.innerText = descriptions[j] + " " + scores[j];
+    liElement.innerText = imageLabels[j].description + " " + imageLabels[j].score;
     ulElement.appendChild(liElement);
   }
   ulElement.style.cssText = 'font-size:13px;';

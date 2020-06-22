@@ -52,6 +52,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.sps.data.Message;
+import com.google.sps.data.ImageLabel;
 
 /**
  * When the user submits the form:
@@ -80,11 +81,21 @@ public class FormHandlerServlet extends HttpServlet {
       Double sentimentScore = (Double) entity.getProperty("sentimentScore");
       String sentimentScoreStr = String.format("%.2f", sentimentScore);
       String imageUrl = (String) entity.getProperty("imageUrl");
-      List<String> imageLabelDescriptions = 
-          new ArrayList<>((Collection<String>) entity.getProperty("imageLabelDescriptions"));
-      List<String> imageLabelScores = 
-          new ArrayList<>((Collection<String>) entity.getProperty("imageLabelScores"));
+      BlobKey blobKey = (BlobKey) entity.getProperty("blobKey");
 
+      // Get the labels of the image that the user uploaded.
+      byte[] blobBytes = getBlobBytes(blobKey);
+      List<EntityAnnotation> imgLabels = getImageLabels(blobBytes);
+
+      // Create a list of image labels with description and score
+      List<ImageLabel> imageLabels = new ArrayList<>();
+      for (EntityAnnotation label : imgLabels) {
+        ImageLabel imageLabel = new ImageLabel(label.getDescription(), 
+            String.format("%.2f", label.getScore()));
+        imageLabels.add(imageLabel);
+      }
+      
+      // Get unicode for emoji
       String emojiCode;
       if (sentimentScore < -0.5) {
         // angry face
@@ -106,8 +117,7 @@ public class FormHandlerServlet extends HttpServlet {
       String combinedText = text + " - " + firstName + " " + lastName +
           " (Sentiment Score: " + sentimentScoreStr + ")";
       
-      Message message = new Message(combinedText, emojiCode, imageUrl, imageLabelDescriptions,
-          imageLabelScores);
+      Message message = new Message(combinedText, emojiCode, imageUrl, imageLabels);
       messages.add(message);
     }
 
@@ -141,18 +151,6 @@ public class FormHandlerServlet extends HttpServlet {
     // Get the URL of the image that the user uploaded to Blobstore.
     String imageUrl = getUploadedFileUrl(blobKey);
 
-    // Get the labels of the image that the user uploaded.
-    byte[] blobBytes = getBlobBytes(blobKey);
-    List<EntityAnnotation> imageLabels = getImageLabels(blobBytes);
-
-    // Create two separate lists for label descriptions and label scores
-    List<String> imageLabelDescriptions = new ArrayList<>();
-    List<String> imageLabelScores  = new ArrayList<>();
-    for (EntityAnnotation label : imageLabels) {
-        imageLabelDescriptions.add(label.getDescription());
-        imageLabelScores.add(String.format("%.2f", label.getScore()));
-    }
-
     // Get the sentiment score of text
     Document doc =
         Document.newBuilder().setContent(text).setType(Document.Type.PLAIN_TEXT).build();
@@ -168,8 +166,7 @@ public class FormHandlerServlet extends HttpServlet {
     messageEntity.setProperty("text", text);
     messageEntity.setProperty("sentimentScore", sentimentScore);
     messageEntity.setProperty("imageUrl", imageUrl);
-    messageEntity.setProperty("imageLabelDescriptions", imageLabelDescriptions);
-    messageEntity.setProperty("imageLabelScores", imageLabelScores);
+    messageEntity.setProperty("blobKey", blobKey);
     
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(messageEntity);
