@@ -2,7 +2,6 @@ package com.google.sps.data;
 import com.google.sps.data.ImageLabel;
 import java.util.List;
 
-/** An item on a list of messages */
 public final class Message {
 
   private final String text;

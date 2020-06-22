@@ -27,12 +27,11 @@ function getMessages() {
   const buttonElement = document.getElementById('view-button');
 
   // Toggle hide and show
-  if (messagesElement.style.display === "none") {
-    messagesElement.style.display = "block";
-    buttonElement.innerText = "Hide messages";
-  } else {
-    messagesElement.style.display = "none";
+  messagesElement.classList.toggle("hidden");
+  if (messagesElement.classList.contains("hidden")) {
     buttonElement.innerText = "View messages";
+  } else {
+    buttonElement.innerText = "Hide messages";
   }
 
   fetch('/form-handler').then(response => response.json()).then((messages) => {
@@ -41,14 +40,11 @@ function getMessages() {
     for (i = 0; i < messages.length; i++) {
       const emoji = String.fromCodePoint(parseInt(messages[i].emojiCode));
       const imageLabels = messages[i].imageLabels;
-    //   const imageLabelDescriptions = messages[i].imageLabelDescriptions;
-    //   const imageLabelScores = messages[i].imageLabelScores;
       messagesElement.appendChild(createPElement("--------------------------------"));
       messagesElement.appendChild(createPElement(messages[i].text + " " + emoji));
       messagesElement.appendChild(createImgElement(messages[i].imageUrl));
       messagesElement.appendChild(createPElement("Image analysis:"));
       messagesElement.appendChild(createUlElement(imageLabels));
-    //   messagesElement.appendChild(createUlElement(imageLabelDescriptions, imageLabelScores));
     }
   });
 }
@@ -82,7 +78,7 @@ function createUlElement(imageLabels) {
   return ulElement;
 }
 
-/** Retrieves the URL that allows users to upload a file to Blobstore*/
+/** Retrieves the URL that allows users to upload a file to Blobstore. */
 function fetchBlobstoreUrl() {
   fetch('/blobstore-upload-url')
     .then((response) => {

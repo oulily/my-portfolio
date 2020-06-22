@@ -8,6 +8,10 @@ body {
   font-size: 14px;
 }
 
+.hidden {
+  display: none;
+}
+
 .project-title {
   margin-bottom: 0px;
   font-size: 20px;
