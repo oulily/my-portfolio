@@ -16,6 +16,8 @@ package com.google.sps;
 
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -32,8 +34,25 @@ public final class FindMeetingQuery {
       return Arrays.asList();
     }
 
-    // List of all unavailable times
-    ArrayList<TimeRange> unavailableTimes = new ArrayList<>();
+    ArrayList<TimeRange> unavailableTimes = getUnavailableTimes(events, request);
+
+    // If there are no conflicts, return the entire day
+    if (unavailableTimes.isEmpty()) {
+      return Arrays.asList(TimeRange.WHOLE_DAY);
+    }
+    
+    ArrayList<TimeRange> availableTimes = getAvailableTimes(unavailableTimes, request);
+
+    return availableTimes;
+  }
+
+  /**
+   * Returns a list of unavailable times
+   */
+  private ArrayList<TimeRange> getUnavailableTimes(Collection<Event> events, MeetingRequest request) {
+    
+    // Use a set to prevent duplicates
+    Set<TimeRange> unavailableTimesSet = new HashSet<>();
 
     // Get list of attendees on meeting request
     Collection<String> reqAttendees = request.getAttendees();
@@ -43,21 +62,64 @@ public final class FindMeetingQuery {
       for (Event event : events) {
         if (event.getAttendees().contains(reqAttendee)) {
 
-          // Add time range of event to list of unavailable time ranges
-          unavailableTimes.add(event.getWhen());
+          // Add time range of event to list of unavailable times
+          unavailableTimesSet.add(event.getWhen());
         }
       }
     }
 
-    // If there are no conflicts, return the entire day
-    if (unavailableTimes.isEmpty()) {
-      return Arrays.asList(TimeRange.WHOLE_DAY);
+    // Convert set to list
+    ArrayList<TimeRange> unavailableTimes = new ArrayList<TimeRange>(unavailableTimesSet);
+
+    sortUnavailableTimes(unavailableTimes);
+    return unavailableTimes;
+  }
+
+  /**
+   * Returns a list of available times.
+   */
+  private ArrayList<TimeRange> getAvailableTimes(ArrayList<TimeRange> unavailableTimes, MeetingRequest request) {
+    
+    ArrayList<TimeRange> availableTimes = new ArrayList<>();
+
+    // Create time ranges using gaps in between unavailable times
+    for (int i = 0; i < unavailableTimes.size(); i++) {
+      TimeRange timeRange = unavailableTimes.get(i);
+      TimeRange prevTimeRange;
+      TimeRange newTimeRange;
+
+      if (i == 0) {
+        newTimeRange = TimeRange.fromStartEnd(TimeRange.START_OF_DAY, timeRange.start(), false);
+      } else {
+        prevTimeRange = unavailableTimes.get(i-1);
+        newTimeRange = TimeRange.fromStartEnd(prevTimeRange.end(), timeRange.start(), false);
+      }
+
+      // Add to list of available times if gap between events is large enough
+      if (newTimeRange.duration() >= request.getDuration()) {
+        availableTimes.add(newTimeRange);
+      }
+      
+      // Time range is last on the list
+      if (i == unavailableTimes.size()-1) {
+        newTimeRange = TimeRange.fromStartEnd(timeRange.end(), TimeRange.END_OF_DAY, true);
+        if (newTimeRange.duration() >= request.getDuration()) {
+          availableTimes.add(newTimeRange);
+        }
+      }
     }
 
-    // Sort list of unavailable times from earliest to latest
+    return availableTimes;
+  }
+  
+  /**
+   * Sorts list of unavailable times from earliest to latest.
+   * Removes nested time ranges and combine overlapping time ranges in list.
+   */
+  private void sortUnavailableTimes(ArrayList<TimeRange> unavailableTimes) {
+
     Collections.sort(unavailableTimes, TimeRange.ORDER_BY_START);
 
-    // Remove nested time ranges and combine overlapping time ranges in list
     int i = 0;
     while (i < unavailableTimes.size()-1) {
       TimeRange currTimeRange = unavailableTimes.get(i);
@@ -77,37 +139,5 @@ public final class FindMeetingQuery {
         i++;
       }
     }
-
-    // List of all available times
-    ArrayList<TimeRange> availableTimes = new ArrayList<>();
-
-    // Create time ranges using gaps in between unavailable times
-    for (int j = 0; j < unavailableTimes.size(); j++) {
-      TimeRange timeRange = unavailableTimes.get(j);
-      TimeRange prevTimeRange;
-      TimeRange newTimeRange;
-
-      if (j == 0) {
-        newTimeRange = TimeRange.fromStartEnd(TimeRange.START_OF_DAY, timeRange.start(), false);
-      } else {
-        prevTimeRange = unavailableTimes.get(j-1);
-        newTimeRange = TimeRange.fromStartEnd(prevTimeRange.end(), timeRange.start(), false);
-      }
-
-      // Add to list of available times if gap between events is large enough
-      if (newTimeRange.duration() >= request.getDuration()) {
-        availableTimes.add(newTimeRange);
-      }
-      
-      // Time range is last on the list
-      if (j == unavailableTimes.size()-1) {
-        newTimeRange = TimeRange.fromStartEnd(timeRange.end(), TimeRange.END_OF_DAY, true);
-        if (newTimeRange.duration() >= request.getDuration()) {
-          availableTimes.add(newTimeRange);
-        }
-      }
-    }
-
-    return availableTimes;
   }
 }
